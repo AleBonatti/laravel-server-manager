@@ -94,8 +94,10 @@ class Backup extends Command
 
                         if(!$silent) $this->info("Database archive created and temp folder cleared.");
 
+                        if(!$silent) echo("Begin S3 transfer...\n");
                         exec("aws s3 cp $archive_name_with_path $aws_bucket/$archive_file_name --quiet --storage-class=STANDARD_IA");
-                        //exec('cp '.Storage::disk('local')->path($dbFileZip).' ~/www/'); // TODO ***debug*** eliminare
+                        //exec('cp '.Storage::disk('local')->path($dbFileZip).' ~/www/'); // ***debug***
+                        
                         Storage::disk('local')->delete($dbFileZip);
 
                     } else {
@@ -129,8 +131,10 @@ class Backup extends Command
 
                 $archive_name_with_path = Storage::disk('local')->path($dbFileZip);
                 
+                if(!$silent) echo("Begin S3 transfer...\n");
                 exec("aws s3 cp $archive_name_with_path $aws_bucket/$archive_file_name --quiet --storage-class=STANDARD_IA");
-                //exec('cp '.$archive_name_with_path.' ~/www/'); // TODO ***debug*** eliminare
+                //exec('cp '.$archive_name_with_path.' ~/www/'); // ***debug***
+                
                 Storage::disk('local')->delete($dbFileZip);
             }
         }
@@ -159,14 +163,11 @@ class Backup extends Command
             }
 
             if(!$silent) echo("Begin S3 transfer...\n");
-
-            
-            
             exec("aws s3 cp $archive_full_path $aws_bucket/$archive_name --quiet --storage-class=STANDARD_IA");
 
             // pulizia cartella
-            //exec("cp $archive_full_path ~/www/"); // TODO ***debug*** eliminare
             Storage::disk('local')->delete("$backup_folder/$archive_name");
+            //exec("cp $archive_full_path ~/www/"); // TODO ***debug***
         }
 
         $this->info('Operation complete!');
