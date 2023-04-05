@@ -159,6 +159,8 @@ class Backup extends Command
             }
 
             if(!$silent) echo("Begin S3 transfer...\n");
+
+            
             
             exec("aws s3 cp $archive_full_path $aws_bucket/$archive_name --quiet --storage-class=STANDARD_IA");
 
