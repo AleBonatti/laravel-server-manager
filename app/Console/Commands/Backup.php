@@ -39,8 +39,8 @@ class Backup extends Command
         }
 
         if(!Storage::disk('local')->exists($backup_folder)) {
-            $this->error("Backup folder '$backup_folder' does not exists. Aborting.");
-            return;
+            Storage::disk('local')->makeDirectory("$backup_folder");
+            $this->error("Backup folder created.");
         }
 
         $this->info('Starting operation...');
@@ -147,7 +147,7 @@ class Backup extends Command
 
             //$source_path = Storage::disk('local')->path($backup_folder);
 
-            $exclude_list = Storage::disk('local')->path("$backup_folder/exclude-list.txt");
+            $exclude_list = resource_path('backup-assets/exclude-list.txt');
             //$exclude = '{"**/cache/*","**/vendor/*","Quantum","**/node_modules","**/storage/app/public/*","**/public/storage","**/.git","Thumb.db"}';
 
             if(!$silent) echo "Building Zip archive from $source_path...\n";

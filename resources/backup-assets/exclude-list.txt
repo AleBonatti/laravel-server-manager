@@ -1,0 +1,8 @@
+cache/*
+vendor
+Quantum/*
+node_modules
+storage/framework/views/*
+.git
+Thumb.db
+autodemolizionedante.it
