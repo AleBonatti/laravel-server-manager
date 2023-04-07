@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Mail\Message;
 
 class Backup extends Command
 {
@@ -171,6 +173,10 @@ class Backup extends Command
         }
 
         $this->info('Operation complete!');
+
+        Mail::raw(env('APP_NAME').' - Backup complete.', function (Message $message) {
+            $message->to(env('MAIL_TO_ADDRESS'))->from(env('MAIL_FROM_ADDRESS'))->text('Back succesfully completed.');
+        });
     }
 
 
