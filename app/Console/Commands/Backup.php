@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\{ Storage, DB, Mail };
 use Illuminate\Mail\Message;
 
 class Backup extends Command
@@ -45,7 +43,7 @@ class Backup extends Command
             $this->error("Backup folder created.");
         }
 
-        $this->info('Starting operation...');
+        $this->line(date('Y-m-d h:i').': starting operation...');
         $type = $this->option('type');
 
         if($type==='full' || $type==='database')
@@ -75,7 +73,7 @@ class Backup extends Command
                 exec("$mysql --login-path=$login_path -h $db_host -Bse 'show databases'", $db_list);
                 
                 if(!is_null($db_list) && is_array($db_list) && count($db_list)) {
-                    if(!$silent) $this->info("Start db dump...");
+                    if(!$silent) $this->line("Start db dump...");
 
                     //foreach($db_list as $db_name) {
                     $this->withProgressBar($db_list, function($db_name) use($dump_command, $excluded_dbs, $db_host, $temp_destination_path, &$exported_dbs) {
@@ -86,7 +84,7 @@ class Backup extends Command
                     });
                     if(!$silent) {
                         $this->newLine();
-                        $this->info("Db dump complete. $exported_dbs exported.");
+                        $this->line("Db dump complete. $exported_dbs exported.");
                     }
 
                     // at least one db to export: create zip archive and delete tmp folder
@@ -94,48 +92,55 @@ class Backup extends Command
                         $dbFileZip = $this->zipDbFolder($backup_folder, $temp_destination_path, $archive_file_name);
                         $archive_name_with_path = Storage::disk('local')->path($dbFileZip);
 
-                        if(!$silent) $this->info("Database archive created and temp folder cleared.");
+                        if(!$silent) $this->line("Database archive created and temp folder cleared.");
 
-                        if(!$silent) echo("Begin S3 transfer...\n");
+                        if(!$silent) $this->line("Begin S3 transfer...");
                         exec("aws s3 cp $archive_name_with_path $aws_bucket/$archive_file_name --quiet --storage-class=STANDARD_IA");
                         //exec('cp '.Storage::disk('local')->path($dbFileZip).' ~/www/'); // ***debug***
                         
                         Storage::disk('local')->delete($dbFileZip);
 
                     } else {
-                        if(!$silent) echo "No db to export.\n";
+                        $this->line('No db to export.');
                     } 
                 }
 
             } else {
                 $db_list = DB::table('databases')->where('active', 1)->get();
                 if(!$db_list->count()) {
-                    if(!$silent) echo "No db to export.\n";
+                    $this->line('No db to export.');
                     return;
                 }
 
-                $this->withProgressBar($db_list, function($db) use($dump_command, $db_host, $temp_destination_path, &$exported_dbs) {
-                    $local_dump_command = $dump_command;
-                    if(!is_null($db->extra_commands)) $local_dump_command .= ' '.$db->extra_commands;
-                    exec("mysqldump $local_dump_command -h $db_host $db->name > $temp_destination_path/$db->name.sql");
-                    $exported_dbs++;
-                });
-
                 if(!$silent) {
+                    $this->withProgressBar($db_list, function($db) use($dump_command, $db_host, $temp_destination_path, &$exported_dbs) {
+                        $local_dump_command = $dump_command;
+                        if(!is_null($db->extra_commands)) $local_dump_command .= ' '.$db->extra_commands;
+                        exec("mysqldump $local_dump_command -h $db_host $db->name > $temp_destination_path/$db->name.sql");
+                        $exported_dbs++;
+                    });
                     $this->newLine();
-                    $this->info("Db dump complete. $exported_dbs items exported.");
+                } else {
+                    foreach($db_list as $db) {
+                        $local_dump_command = $dump_command;
+                        if(!is_null($db->extra_commands)) $local_dump_command .= ' '.$db->extra_commands;
+                        exec("mysqldump $local_dump_command -h $db_host $db->name > $temp_destination_path/$db->name.sql");
+                        $exported_dbs++;
+                    }
                 }
+
+                $this->line("Db dump complete. $exported_dbs items exported.");
 
                 // at least one db exported: create zip archive and delete tmp folder
                 $dbFileZip = $this->zipDbFolder($backup_folder, $temp_destination_path, $archive_file_name);
                 
-                if(!$silent) $this->info("Database archive created and temp folder cleared.");
+                if(!$silent) $this->line("Database archive created and temp folder cleared.");
 
                 $archive_name_with_path = Storage::disk('local')->path($dbFileZip);
                 
-                if(!$silent) echo("Begin S3 transfer...\n");
                 exec("aws s3 cp $archive_name_with_path $aws_bucket/$archive_file_name --quiet --storage-class=STANDARD_IA");
                 //exec('cp '.$archive_name_with_path.' ~/www/'); // ***debug***
+                $this->line("DB transfer to S3 complete...\n");
                 
                 Storage::disk('local')->delete($dbFileZip);
             }
@@ -152,19 +157,19 @@ class Backup extends Command
             $exclude_list = resource_path('backup-assets/exclude-list.txt');
             //$exclude = '{"**/cache/*","**/vendor/*","Quantum","**/node_modules","**/storage/app/public/*","**/public/storage","**/.git","Thumb.db"}';
 
-            if(!$silent) echo "Building Zip archive from $source_path...\n";
+            if(!$silent) $this->line("Building Zip archive from $source_path...");
             //exec("tar -czf $archive_name_with_path --exclude-vcs -X ./exclude-list.txt -C $source_path . -C $backup_folder $archive_name");
             //exec("tar -czf $archive_full_path --exclude-vcs --exclude=$exclude -C $source_path .");
             exec("tar -czf $archive_full_path --exclude-vcs -X $exclude_list -C $source_path .");
             //unlink($db_full_dest_folder); // remove database archive
 
-            if(!$silent) echo "Zip archive $archive_name created.\n";
+            if(!$silent) $this->line("Zip archive $archive_name created.");
 
             if(!Storage::disk('local')->exists("$backup_folder/$archive_name")) {
                 $this->error("Archive $archive_name not found. Operation aborted.");
             }
 
-            if(!$silent) echo("Begin S3 transfer...\n");
+            if(!$silent) $this->line('Begin S3 transfer...');
             exec("aws s3 cp $archive_full_path $aws_bucket/$archive_name --quiet --storage-class=STANDARD_IA");
 
             // pulizia cartella
@@ -172,7 +177,7 @@ class Backup extends Command
             //exec("cp $archive_full_path ~/www/"); // TODO ***debug***
         }
 
-        $this->info('Operation complete!');
+        $this->line(date('Y-m-d h:i').': operation complete.');
 
         Mail::raw(env('APP_NAME').' - Backup complete.', function (Message $message) {
             $message->to(env('MAIL_TO_ADDRESS'))->from(env('MAIL_FROM_ADDRESS'))->text('Back succesfully completed.');
