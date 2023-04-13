@@ -179,8 +179,10 @@ class Backup extends Command
 
         $this->line(date('Y-m-d h:i').': operation complete.');
 
-        Mail::raw(env('APP_NAME').' - Backup complete.', function (Message $message) {
-            $message->to(env('MAIL_TO_ADDRESS'))->from(env('MAIL_FROM_ADDRESS'))->text('Back succesfully completed.');
+        Mail::raw('Backup succesfully completed', function (Message $message) {
+            $message->to(env('MAIL_TO_ADDRESS'))
+                ->from(env('MAIL_FROM_ADDRESS'))
+                ->subject(env('APP_NAME').' - Backup complete.');
         });
     }
 
