@@ -52,40 +52,42 @@
             <!-- Navigation -->
             <nav class="mt-6 px-3">
                 <div class="space-y-1">
+                    <div class="border-b border-b-gray-100/20 mt-3 pb-4">
+                        <a href="/admin/dashboard" class="-mb-2.5 text-gray-400 hover:text-white hover:bg-gray-100/20 uppercase group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            Dashboard
+                        </a>
+                    </div>
                     <div  class="border-b border-b-gray-100/20 mt-3 pb-4 first:cursor-auto">
                         <!-- se ha figli -->
                         <div>
                             <span class="-mb-2.5 text-gray-400 uppercase group flex items-center px-2 py-2 text-sm font-medium rounded-md mt-2.5">
-                                Pizzetta
+                                Backup
                             </span>
                             <ul class="px-7 space-y-1 mt-3">
                                 <li>
-                                    <!-- text-gray-300, text-purple-400 -->
-                                    <Link href="/admin/dashboard" :class="[$page.url==='/admin/dashboard' ? 'text-purple-400': 'text-gray-300', 'text-sm font-medium hover:text-purple-400 focus:text-purple-400 flex items-center']" >
+                                    <Link href="/admin/database" :class="[$page.url.startsWith('/admin/database') ? 'text-purple-400': 'text-gray-300', 'text-sm font-medium hover:text-purple-400 focus:text-purple-400 flex items-center']" >
                                         <span class="w-1 h-1 bg-white/30 block rounded-full mr-3"></span>
-                                        Dashboard
+                                        Database
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/admin/cazzi" :class="[$page.url==='/admin/cazzi' ? 'text-purple-400': 'text-gray-300', 'text-sm font-medium hover:text-purple-400 focus:text-purple-400 flex items-center']" >
+                                    <Link href="/admin/cazzi" :class="[$page.url.startsWith('/admin/cazzi') ? 'text-purple-400': 'text-gray-300', 'text-sm font-medium hover:text-purple-400 focus:text-purple-400 flex items-center']" >
                                         <span class="w-1 h-1 bg-white/30 block rounded-full mr-3"></span>
                                         Cazzi
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/logout" as="button" method="post" class="text-sm font-medium text-gray-300 hover:text-purple-400 focus:text-purple-400 flex items-center" >
-                                        <span class="w-1 h-1 bg-white/30 block rounded-full mr-3"></span>
-                                        Logout
                                     </Link>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    <!-- log errori è solo su desktop -->
                     <div class="border-b border-b-gray-100/20 mt-3 pb-4">
                         <a href="/admin/log-viewer" target="_blank" class="-mb-2.5 text-gray-400 hover:text-white hover:bg-gray-100/20 uppercase group flex items-center px-2 py-2 text-sm font-medium rounded-md">
                             Log errori
                         </a>
+                    </div>
+                    <div class="border-b border-b-gray-100/20 mt-3 pb-4">
+                        <Link href="/logout" as="button" method="post" class="-mb-2.5 text-gray-400 hover:text-white hover:bg-gray-100/20 uppercase group flex items-center px-2 py-2 text-sm font-medium rounded-md" >
+                            Logout
+                        </Link>
                     </div>
                 </div>
             </nav>

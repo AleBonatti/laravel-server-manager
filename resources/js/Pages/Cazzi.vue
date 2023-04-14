@@ -6,5 +6,5 @@
     </div>
 </template>
 <script setup>
-    import NavBar from '@/Shared/NavBar.vue'
+    import NavBar from '@/Shared/NavBar.vue';
 </script>

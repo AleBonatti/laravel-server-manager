@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{ ApiController, DatabaseController };
 
 /*
 |--------------------------------------------------------------------------
@@ -18,14 +19,14 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/admin/dashboard', function () {
+Route::post('admin/api/delete/{element}', [ApiController::class, 'delete']);
+
+Route::get('admin/dashboard', function () {
     $menu = [];
     return inertia('Dashboard', compact('menu'));
 });
 
-Route::get('/admin/cazzi', function () {
-    return inertia('Cazzi');
-});
+Route::resource('admin/database', DatabaseController::class);
 
 Route::post('logout', function () {
     return inertia('Cazzi', compact('menu'));
