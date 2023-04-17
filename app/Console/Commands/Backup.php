@@ -161,7 +161,6 @@ class Backup extends Command
             //exec("tar -czf $archive_name_with_path --exclude-vcs -X ./exclude-list.txt -C $source_path . -C $backup_folder $archive_name");
             //exec("tar -czf $archive_full_path --exclude-vcs --exclude=$exclude -C $source_path .");
             exec("tar -czf $archive_full_path --exclude-vcs -X $exclude_list -C $source_path .");
-            //unlink($db_full_dest_folder); // remove database archive
 
             if(!$silent) $this->line("Zip archive $archive_name created.");
 

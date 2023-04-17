@@ -9,9 +9,9 @@
     <!-- User account dropdown -->
     <div class="hidden bg-cover bg-pic lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-gray-100">
         <div class="flex flex-shrink-0 items-center px-6 py-6 bg-black/70">
-            <a href="/admin/dashboard">
+            <Link href="/admin/dashboard">
                 <img class="h-8 w-auto" src="/assets/loghi/logo.svg" alt="Methlab" />
-            </a>
+            </Link>
         </div>
         <!-- Sidebar component, swap this element with another sidebar if you like -->
         <div class="flex h-0 flex-1 flex-col overflow-y-auto pt-1 bg-black/70">
@@ -53,9 +53,9 @@
             <nav class="mt-6 px-3">
                 <div class="space-y-1">
                     <div class="border-b border-b-gray-100/20 mt-3 pb-4">
-                        <a href="/admin/dashboard" class="-mb-2.5 text-gray-400 hover:text-white hover:bg-gray-100/20 uppercase group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <Link href="/admin/dashboard" class="-mb-2.5 text-gray-400 hover:text-white hover:bg-gray-100/20 uppercase group flex items-center px-2 py-2 text-sm font-medium rounded-md">
                             Dashboard
-                        </a>
+                        </Link>
                     </div>
                     <div  class="border-b border-b-gray-100/20 mt-3 pb-4 first:cursor-auto">
                         <!-- se ha figli -->
@@ -71,9 +71,9 @@
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/admin/cazzi" :class="[$page.url.startsWith('/admin/cazzi') ? 'text-purple-400': 'text-gray-300', 'text-sm font-medium hover:text-purple-400 focus:text-purple-400 flex items-center']" >
+                                    <Link href="/admin/folders" :class="[$page.url.startsWith('/admin/folders') ? 'text-purple-400': 'text-gray-300', 'text-sm font-medium hover:text-purple-400 focus:text-purple-400 flex items-center']" >
                                         <span class="w-1 h-1 bg-white/30 block rounded-full mr-3"></span>
-                                        Cazzi
+                                        Folders
                                     </Link>
                                 </li>
                             </ul>

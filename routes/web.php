@@ -21,30 +21,20 @@ Route::get('/', function () {
 
 Route::post('admin/api/delete/{element}', [ApiController::class, 'delete']);
 
-Route::get('admin/dashboard', function () {
-    $menu = [];
-    return inertia('Dashboard', compact('menu'));
+
+Route::middleware('auth')->group(function() {
+    Route::get('admin/dashboard', function () {
+        $menu = [];
+        return inertia('Dashboard', compact('menu'));
+    });
+
+    Route::get('admin/database', [DatabaseController::class, 'index']);
+    Route::put('admin/database/{database}', [DatabaseController::class, 'create']);
+    Route::post('admin/database', [DatabaseController::class, 'store']);
+
+    Route::post('logout', function () {
+        return inertia('Cazzi', compact('menu'));
+    });
 });
-
-Route::resource('admin/database', DatabaseController::class);
-
-Route::post('logout', function () {
-    return inertia('Cazzi', compact('menu'));
-});
-
-/* Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-}); */
-
-
-/* Route::get('admin/{any}', function () {
-    return view('app');
-})->where('any', '.*'); */
 
 require __DIR__.'/auth.php';
